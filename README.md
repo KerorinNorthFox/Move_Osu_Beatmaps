@@ -1,2 +1,2 @@
-# osu_file_move
+# Move Osu map file
 Osu!の譜面ファイルをSongsフォルダに移動する
