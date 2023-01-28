@@ -1,6 +1,9 @@
 import
   std/os,
-  std/parsecfg
+  std/parsecfg,
+  std/strformat
+
+const configPath: string = "config.ini"
 
 proc help*(error:string="") = # ヘルプを表示
   echo error
@@ -10,33 +13,35 @@ proc progressReport*(text:string) = # 結果表示
   echo text
   echo "####################\n"
 
-proc makeConfigFile*(osuPath:string) = # configを作成する
+proc makeConfigFile*(path:string) = # configを作成する
   var dict: Config = newConfig()
-  dict.setSectionKey("", "path", osuPath)
-  dict.writeConfig("config.ini")
+  dict.setSectionKey("", "path", path)
+  dict.writeConfig(configPath)
   progressReport("Made new config file.")
 
-proc updateConfigFile*(osuPath:string) = # config編集
-  if not "config.ini".existsFile:
-    makeConfigFile(osuPath)
+proc updateConfigFile*(path:string) = # config編集
+  if not configPath.existsFile:
+    makeConfigFile(path)
     return
-  var dict: Config = loadConfig("config.ini")
-  dict.setSectionKey("", "path", osuPath)
-  dict.writeConfig("config.ini")
+  var dict: Config = loadConfig(configPath)
+  dict.setSectionKey("", "path", path)
+  dict.writeConfig(configPath)
   progressReport("Updated new config file.")
 
 proc loadConfigFile*(): string = # configを読み込む
-  if not "config.ini".existsFile:
-    help("Error: 'config.ini' file does not exist.\nTry the command '--path *DirectoryPath*' to make config file and set path")
+  if not configPath.existsFile:
+    help(fmt"""Error: '{configPath}'  file does not exist.
+Try the command '--path *DirectoryPath*' to make config file and set path""")
     return
-  var dict: Config = loadConfig("config.ini")
+  var dict: Config = loadConfig(configPath)
   try:
     let path = dict.getSectionValue("", "path")
     return path
   except KeyError:
-    help("Error: Keyword 'path' does not exist in 'config.ini'.\nTry the command '--path *DirectoryPath*' to set path.")
+    help(fmt"""Error: Keyword 'path' does not exist in '{configPath}'.
+Try the command '--path *DirectoryPath*' to set path.""")
 
-proc moveFile*(path:string) = # ファイル移動
+proc moveFile*(toPath:string) = # ファイル移動
   discard
 
 proc main() =
