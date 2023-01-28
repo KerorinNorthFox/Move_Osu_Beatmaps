@@ -20,7 +20,7 @@ proc makeConfigFile*(path:string) = # configを作成する
   progressReport("Made new config file.")
 
 proc updateConfigFile*(path:string) = # config編集
-  if not configPath.existsFile:
+  if not configPath.fileExists:
     makeConfigFile(path)
     return
   var dict: Config = loadConfig(configPath)
@@ -29,10 +29,10 @@ proc updateConfigFile*(path:string) = # config編集
   progressReport("Updated new config file.")
 
 proc loadConfigFile*(): string = # configを読み込む
-  if not configPath.existsFile:
+  if not configPath.fileExists:
     help(fmt"""Error: '{configPath}'  file does not exist.
 Try the command '--path *DirectoryPath*' to make config file and set path""")
-    return
+    quit(QuitSuccess)
   var dict: Config = loadConfig(configPath)
   try:
     let path = dict.getSectionValue("", "path")
@@ -40,6 +40,7 @@ Try the command '--path *DirectoryPath*' to make config file and set path""")
   except KeyError:
     help(fmt"""Error: Keyword 'path' does not exist in '{configPath}'.
 Try the command '--path *DirectoryPath*' to set path.""")
+    quit(QuitSuccess)
 
 proc moveFile*(toPath:string) = # ファイル移動
   discard
