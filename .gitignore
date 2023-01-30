@@ -1,3 +1,4 @@
 /__pycache__/
 /src/nim/main
-/src/nim/config.ini
+*.ini
+*.exe

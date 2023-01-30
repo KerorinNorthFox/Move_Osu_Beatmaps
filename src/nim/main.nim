@@ -10,20 +10,20 @@ const downloadPath*: string = joinPath(getEnv("USERPROFILE"), "Downloads")
 proc help*(error:string="") = # ヘルプを表示 
   echo error
   echo "[Help]"
-  echo "commands:"
+  echo "Available commands:"
   echo fmt"""  {"--run":<22}: Run the program to move Maps."""
   echo fmt"""  {"--path":<22}: Display the configured path."""
   echo fmt"""  {"--path 'DirectoryPath'":<22}: Set the path. Enter the path to Osu!'s Songs directory in 'DirectoryPath'."""
   echo fmt"""  {" ":<22}  EXECUTE THIS COMMAND FIRST."""
   echo fmt"""  {"--help":<22}: Display this help."""
 
-proc makeConfigFile*(configPath:string, path:string): string = # configを作成する
+proc makeConfigFile*(configPath, path: string): string = # configを作成する
   var dict: Config = newConfig()
   dict.setSectionKey("", "path", path)
   dict.writeConfig(configPath)
   return "[Success]: Made new config file."
 
-proc updateConfigFile*(configPath:string, path:string): string = # config編集
+proc updateConfigFile*(configPath, path: string): string = # config編集
   if not configPath.fileExists:
     return makeConfigFile(configPath, path)
   var dict: Config = loadConfig(configPath)
