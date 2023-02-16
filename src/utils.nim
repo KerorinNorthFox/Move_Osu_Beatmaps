@@ -1,7 +1,7 @@
 import
-  std/os, # ファイル操作
-  std/parsecfg, # 設定ファイルを利用する
-  std/strformat, # 文字列に変数埋め込み
+  std/os,
+  std/parsecfg,
+  std/strformat,
   std/strutils
 
 const configFilePath*: string = "config.ini"
@@ -12,16 +12,34 @@ type ReturnPath* = ref object
   isError: bool
   text: string
 
+proc `path=`*(self:ReturnPath, path:string): void =
+  self.path = path
+
+proc path*(self:ReturnPath): string =
+  self.path
+
+proc `isError=`*(self:ReturnPath, isError:bool): void =
+  self.isError = isError
+
+proc isError*(self:ReturnPath): bool =
+  self.isError
+
+proc `text=`*(self:ReturnPath, text:string): void =
+  self.text = text
+
+proc text*(self:ReturnPath): string =
+  self.text
+
 # ヘルプを表示
-proc help*(error:string="") =
+proc help*(error:string=""): void =
   echo error
   echo "[Help]"
   echo "Available commands:"
-  echo fmt"""  {"--run":<22}: Run the program to move Maps."""
+  echo fmt"""  {"--run":<22}: Run the program to move beatmaps."""
   echo fmt"""  {"--path":<22}: Display the configured path."""
   echo fmt"""  {"--path 'DirectoryPath'":<22}: Set the path. Enter the path to Osu!'s Songs directory in 'DirectoryPath'."""
   echo fmt"""  {" ":<22}  EXECUTE THIS COMMAND FIRST."""
-  echo fmt"""  {"--help":<22}: Display this help."""
+  echo fmt"""  {"--help":<22}: Display the help."""
 
 # configを作成する
 proc makeConfigFile*(configPath, path: string): string =
@@ -46,7 +64,7 @@ proc loadConfigFile*(configPath:string): string =
   return path
 
 # 読み込んだpathを返す
-proc returnPath(): ReturnPath =
+proc returnPath*(): ReturnPath =
   if not configFilePath.fileExists:
     let text: string = fmt"""[Error]: '{configFilePath}'  file does not exist. Try the command '--path "DirectoryPath"' to make config file and set path"""
     return ReturnPath(path:"", text:text, isError:true)
@@ -79,44 +97,3 @@ proc moveMapFiles*(toPath:string): string =
       return "Fail"
 
   return "Success"
-
-proc main() =
-  let cmdArgCount: int = paramCount()
-  if cmdArgCount == 0:
-    help("[Error]: No CommandLine Args.")
-
-  elif cmdArgCount == 1:
-    let cmdArg: string = paramStr(1)
-    if cmdArg == "--run": # ファイル移動実行
-      let result: ReturnPath = returnPath()
-      echo result.text
-      if result.isError:
-        quit(QuitSuccess)
-      let msg: string = moveMapFiles(result.path)
-      echo "[INFO]: ", msg
-    elif cmdArg == "--path":
-        let result: ReturnPath = returnPath()
-        echo result.text
-        if result.isError:
-          quit(QuitSuccess)
-        echo fmt"[Info]: The configured path is '{result.path}'"
-    elif cmdArg == "--help": # ヘルプ表示
-      help()
-    else:
-      help("[Error]: unexpected command in one args: " & cmdArg)
-
-  elif cmdArgCount == 2:
-    let firstCmdArg: string = paramStr(1)
-    let secondCmdArg: string = paramStr(2)
-    if firstCmdArg == "--path": # パス設定
-      let msg: string = updateConfigFile(configFilePath, secondCmdArg)
-      echo msg
-    else:
-      help("[Error]: unexpected command in two args: " & firstCmdArg)
-
-  else: # コマンドライン引数多すぎ
-    help("[Error]: Too many CommandLine Args")
-
-
-when isMainModule:
-  main()
