@@ -36,7 +36,7 @@ proc main(): void =
       let msg: string = updateConfigFile(configFilePath, secondCmdArg)
       echo msg
     else:
-      help("[Error]: unexpected command in two args: " & firstCmdArg)
+      help("[Error]: Unexpected command in two args: " & firstCmdArg)
 
   else: # コマンドライン引数多すぎ
     help("[Error]: Too many CommandLine Args")
