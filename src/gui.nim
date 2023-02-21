@@ -96,10 +96,20 @@ method addControls(self:var MainUI): void =
   self.rightUI.add(self.progressBar)
 
 proc setButtonEvent(self: MainUI): void =
-  discard
+  self.beatmapMoveButton.onClick = proc(event: ClickEvent) =
+    discard
+
+  self.settingButton.onClick = proc(event: ClickEvent) =
+    discard
 
 proc setButtonEvent(self: SettingUI): void =
-  discard
+  self.changeDirectoryButton.onClick = proc(event: ClickEvent) =
+    var dialog = SelectDirectoryDialog()
+    dialog.run()
+    echo dialog.selectedDirectory
+
+  self.saveButton.onClick = proc(event: ClickEvent) =
+    discard
 
 when isMainModule:
   main()
