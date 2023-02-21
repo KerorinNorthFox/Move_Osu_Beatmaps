@@ -1,10 +1,11 @@
 import
   nigui,
+  nigui/msgbox,
   ./utils
 
 type UI = object of RootObj
   mainWindow: Window # メイン画面
-  mainUI: Container # 画面最上位コンテナ
+  mainUI: LayoutContainer # 画面最上位コンテナ
 
 # 設定画面のUI
 type SettingUI = object of UI
@@ -14,9 +15,9 @@ type SettingUI = object of UI
 
 # メイン画面のUI
 type MainUI = object of UI
-  leftUI: Container # 左UI
-  menuLabel: Label # 左UI->メニュー
+  leftUI: LayoutContainer # 左UI
   beatmapMoveButton: Button # 左UI->譜面移動ボタン
+  settingButton: Button # 左UI->設定画面ボタン
 
   rightUI: Container # 右UI
   resultArea: TextArea # 右UI->結果表示エリア
@@ -34,6 +35,11 @@ proc main(): void =
   app.init()
   let ui = newUI()
   ui.mainWindow.show()
+  # ×ボタン押したときのmsgBox
+  ui.mainWindow.onCloseClick = proc(event: CloseClickEvent) =
+    case ui.mainWindow.msgBox("Do you want to quit?", "", "Quit", "Cancel")
+    of 1: app.quit()
+    else: discard
   app.run()
 
 proc newUI(): MainUI =
@@ -69,13 +75,16 @@ method addControls(self:var MainUI): void =
   self.mainWindow.add(self.mainUI)
 
   self.leftUI = newLayoutContainer(Layout_Vertical)
+  self.leftUI.heightMode = HeightMode_Expand # 縦方向に長さ最大
+  self.leftUI.xAlign = XAlign_Center # X軸で真ん中にコントロールを整列させる
+  self.leftUI.frame = newFrame("~Menu~")
   self.mainUI.add(self.leftUI)
-
-  self.menuLabel = newLabel("~Menu~")
-  self.leftUI.add(self.menuLabel)
 
   self.beatmapMoveButton = newButton("Move beatmaps")
   self.leftUI.add(self.beatmapMoveButton)
+
+  self.settingButton = newButton("Settings")
+  self.leftUI.add(self.settingButton)
 
   self.rightUI = newLayoutContainer(Layout_Vertical)
   self.mainUI.add(self.rightUI)
