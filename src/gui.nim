@@ -27,7 +27,8 @@ type MainUI = object of UI
 proc newUI(): MainUI # UIのコンストラクタ
 method initWindow(self:var UI, title:string="", height:int=100, width:int=100): void {.base.}  # ウィンドウ作成
 method addControls(self:var UI): void {.base.}  # ウィンドウにコントロール追加
-proc setButtonEvent(self: MainUI): void # ボタンの処理
+proc setButtonEvent(self: MainUI): void # メイン画面のボタンの処理
+proc setButtonEvent(self: SettingUI): void # 設定画面のボタンの処理
 
 proc main(): void =
   app.init()
@@ -57,7 +58,10 @@ method addControls(self:var SettingUI): void =
   self.label = newLabel("hogehoge")
   self.mainUI.add(self.label)
 
-  self.saveButton = newButton("Change save directory")
+  self.changeDirectoryButton = newButton("Change save directory")
+  self.mainUI.add(self.changeDirectoryButton)
+
+  self.saveButton = newButton("Save settings")
   self.mainUI.add(self.saveButton)
 
 method addControls(self:var MainUI): void =
@@ -83,6 +87,9 @@ method addControls(self:var MainUI): void =
   self.rightUI.add(self.progressBar)
 
 proc setButtonEvent(self: MainUI): void =
+  discard
+
+proc setButtonEvent(self: SettingUI): void =
   discard
 
 when isMainModule:
