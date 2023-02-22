@@ -4,6 +4,18 @@ import
   ./utils
 
 
+# ヘルプを表示
+proc help(error:string=""): void =
+  echo error
+  echo "[Help]"
+  echo "Available commands:"
+  echo fmt"""  {"--run":<22}: Run the program to move beatmaps."""
+  echo fmt"""  {"--path":<22}: Display the configured path."""
+  echo fmt"""  {"--path 'DirectoryPath'":<22}: Set the path. Enter the path to Osu!'s Songs directory in 'DirectoryPath'."""
+  echo fmt"""  {" ":<22}  EXECUTE THIS COMMAND FIRST."""
+  echo fmt"""  {"--help":<22}: Display the help."""
+
+
 proc main(): void =
   let cmdArgCount: int = paramCount()
   if cmdArgCount == 0:
@@ -14,14 +26,14 @@ proc main(): void =
     if cmdArg == "--run": # ファイル移動実行
       let result: ReturnPath = returnPath()
       echo result.text
-      if result.isError:
+      if result.isError != 0:
         quit(QuitSuccess)
-      let msg: string = moveMapFiles(result.path)
-      echo "[INFO]: ", msg
+      let obj: MoveMapFiles = moveMapFiles(result.path)
+      echo obj.msg
     elif cmdArg == "--path":
         let result: ReturnPath = returnPath()
         echo result.text
-        if result.isError:
+        if result.isError != 0:
           quit(QuitSuccess)
         echo fmt"[Info]: The configured path is '{result.path}'"
     elif cmdArg == "--help": # ヘルプ表示
