@@ -4,10 +4,6 @@ import
   std/strformat,
   ./utils
 
-proc dispose(window: var Window) =
-  let w = window
-  w.dispose() # force calling "dispose(window: Window)" instead of itself
-  # window = nil
 
 type UI = object of RootObj
   mainWindow: Window # メイン画面
