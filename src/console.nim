@@ -45,7 +45,7 @@ proc main(): void =
     let firstCmdArg: string = paramStr(1)
     let secondCmdArg: string = paramStr(2)
     if firstCmdArg == "--path": # パス設定
-      let msg: string = updateConfigFile(configFilePath, secondCmdArg)
+      let msg: string = updatePath(secondCmdArg)
       echo msg
     else:
       help("[Error]: Unexpected command in two args: " & firstCmdArg)

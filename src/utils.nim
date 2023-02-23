@@ -2,11 +2,8 @@ import
   std/os,
   std/parsecfg,
   std/strformat,
-  std/strutils
-
-
-const configFilePath*: string = "config.ini"
-const downloadPath*: string = joinPath(getEnv("USERPROFILE"), "Downloads")
+  std/strutils,
+  ./lang
 
 
 type ReturnPath* = ref object
@@ -49,29 +46,58 @@ proc isError*(self:MoveMapFiles): bool =
   self.isError
 
 
+proc makeConfigFile(): void
+proc updatepath*(path:string): string
+proc updateLangMode*(mode:int): void
+proc loadPath(): string
+proc loadLangMode*(): int
+proc returnPath*(): ReturnPath
+proc moveMapFiles*(toPath:string): MoveMapFiles
+
+
+const configFilePath*: string = "config.ini"
+const downloadPath*: string = joinPath(getEnv("USERPROFILE"), "Downloads")
+let LANGMODE*: int = loadLangMode()
+
+if not configFilePath.fileExists:
+  makeConfigFile()
+
+
 # configを作成する
-proc makeConfigFile(configPath, path: string): string =
+proc makeConfigFile(): void =
   var dict: Config = newConfig()
-  dict.setSectionKey("", "path", path)
-  dict.writeConfig(configPath)
-  return "[Success]: Made new config file."
+  dict.setSectionKey("PATH", "path", "")
+  dict.setSectionKey("LANGUAGE", "mode", "1")
+  dict.writeConfig(configFilePath)
 
 
-# config編集
-proc updateConfigFile*(configPath, path: string): string =
-  if not configPath.fileExists:
-    return makeConfigFile(configPath, path)
-  var dict: Config = loadConfig(configPath)
-  dict.setSectionKey("", "path", path)
-  dict.writeConfig(configPath)
+# configのpath編集
+proc updatePath*(path:string): string =
+  var dict: Config = loadConfig(configFilePath)
+  dict.setSectionKey("PATH", "path", path)
+  dict.writeConfig(configFilePath)
   return "[Success]: Updated new config file."
 
 
+# configのlanguage編集
+proc updateLangMode*(mode:int): void =
+  var dict: Config = loadConfig(configFilePath)
+  dict.setSectionKey("LANGUAGE", "mode", $mode)
+  dict.writeConfig(configFilePath)
+
+
 # configからpathを読み込む
-proc loadConfigFile*(configPath:string): string =
-  var dict: Config = loadConfig(configPath)
-  let path = dict.getSectionValue("", "path")
+proc loadPath(): string =
+  var dict: Config = loadConfig(configFilePath)
+  let path = dict.getSectionValue("PATH", "path")
   return path
+
+
+# configから言語のmodeを読み込む
+proc loadLangMode(): int =
+  var dict: Config = loadConfig(configFilePath)
+  let mode = dict.getSectionValue("LANGUAGE", "mode")
+  return mode.parseInt
 
 
 # 読み込んだpathを返す
@@ -80,7 +106,7 @@ proc returnPath*(): ReturnPath =
     let text: string = fmt"""[Error]: '{configFilePath}'  file does not exist. Try the command '--path "DirectoryPath"' to make config file and set path"""
     return ReturnPath(path:"", text:text, isError:1)
   try:
-    let path: string = loadConfigFile(configFilePath)
+    let path: string = loadPath()
     let text = fmt"[Success]: Get path '{path}' from '{configFilePath}'."
     return ReturnPath(path:path, text:text, isError:0)
   except KeyError:

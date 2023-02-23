@@ -2,127 +2,153 @@ import
   nigui,
   nigui/msgbox,
   std/strformat,
-  ./utils
+  ./utils,
+  ./lang
 
 
-type UI = object of RootObj
-  mainWindow: Window # メイン画面
-  mainUI: LayoutContainer # 画面最上位コンテナ
+type Application = object of RootObj
+  window: Window # メイン画面
+  mainUi: LayoutContainer # 画面最上位コンテナ
 
 # 設定画面のUI
-type SettingUI = object of UI
+type SettingWindow = object of Application
+  changePathUi: LayoutContainer
   pathBox: TextBox # パスを表示＆入力するテキストボックス
-  downUI: LayoutContainer
-  changeDirectoryButton: Button # 移動先のディレクトリを選択するボタン
-  saveButton: Button # 設定を保存するボタン
+  buttonUi: LayoutContainer
+  changeDirectoryButton: Button # 下UI->移動先のディレクトリを選択するボタン
+  saveButton: Button # 下UI->設定を保存するボタン
+
+  changeLangUi: LayoutContainer
+  comboBox: ComboBox
+  changeLangButton: Button # 言語変更ボタン
 
 # メイン画面のUI
-type MainUI = object of UI
-  leftUI: LayoutContainer # 左UI
+type MainWindow = object of Application
+  leftUi: LayoutContainer # 左UI
   beatmapMoveButton: Button # 左UI->譜面移動ボタン
   settingButton: Button # 左UI->設定画面ボタン
 
-  rightUI: LayoutContainer # 右UI
+  rightUi: LayoutContainer # 右UI
   resultArea: TextArea # 右UI->結果表示エリア
   progressBar: ProgressBar # 右UI->プログレスバー
 
-  settingUI: SettingUI # 設定ウィンドウ
+  setting: SettingWindow # 設定ウィンドウ
 
 
-proc newUI(): MainUI
-method initWindow(self:var UI, title:string="", height:int=100, width:int=100): void {.base.}
-method addControls(self:var UI): void {.base.}
-proc setButtonEvent(self: MainUI): void
-proc setButtonEvent(self: SettingUI, ui: MainUI): void
+proc newApp(): MainWindow
+method init(self:var Application, title:string="", height:int=100, width:int=100): void {.base.}
+method setControls(self:var Application): void {.base.}
+proc setButtonEvent(self: MainWindow): void
+proc setButtonEvent(self: SettingWindow, ui: MainWindow): void
 
 
 proc main(): void =
   app.init()
-  let ui: MainUI = newUI()
-  ui.mainWindow.show()
-  ui.settingUI.mainWindow.show()
-  ui.settingUI.mainWindow.visible = false
+  let application: MainWindow = newApp()
+  application.setButtonEvent()
+  application.setting.setButtonEvent(application)
 
-  ui.resultArea.addLine("[Info]: Start program.")
-  ui.setButtonEvent()
-  ui.settingUI.setButtonEvent(ui)
+  application.window.show()
+  application.setting.window.show()
+  application.setting.window.visible = false
+
+  application.resultArea.addLine(LANG[LANGMODE].startProgram)
   app.run()
 
 
-proc newUI(): MainUI =
-  result.initWindow("Main Window", 400, 600) # メイン画面作成
-  result.settingUI.initWindow("Setting", 300, 400) # 設定画面作成
-  result.addControls()
-  result.settingUI.addControls()
+proc newApp(): MainWindow =
+  result.init(LANG[LANGMODE].mainWindowTitle, 400, 600) # メイン画面作成
+  result.setting.init(LANG[LANGMODE].settingWindowTitle, 300, 400) # 設定画面作成
+  result.setControls()
+  result.setting.setControls()
 
 
-method initWindow(self:var UI, title:string="", height:int=100, width:int=100): void {.base.} =
-  self.mainWindow = newWindow(title)
-  self.mainWindow.height = height.scaleToDpi
-  self.mainWindow.width = width.scaleToDpi
+method init(self:var Application, title:string="", height:int=100, width:int=100): void {.base.} =
+  self.window = newWindow(title)
+  self.window.height = height.scaleToDpi
+  self.window.width = width.scaleToDpi
 
 
-method addControls(self:var UI): void {.base.} =
-  self.mainUI = newLayoutContainer(Layout_Horizontal)
-  self.mainWindow.add(self.mainUI)
+method setControls(self:var Application): void {.base.} =
+  self.mainUi = newLayoutContainer(Layout_Horizontal)
+  self.window.add(self.mainUi)
 
 
-method addControls(self:var SettingUI): void =
-  self.mainUI = newLayoutContainer(Layout_Vertical)
-  self.mainUI.heightMode = HeightMode_Expand
-  self.mainUI.frame = newFrame("hogehoge")
+method setControls(self:var SettingWindow): void =
+  self.mainUi = newLayoutContainer(Layout_Vertical)
+
+  self.changePathUi = newLayoutContainer(Layout_Vertical)
+  self.changePathUi.widthMode = WidthMode_Expand
+  self.changePathUi.frame = newFrame(LANG[LANGMODE].sChangePathUiFrameText)
 
   self.pathBox = newTextBox()
 
-  self.downUI = newLayoutContainer(Layout_Horizontal)
+  self.buttonUi = newLayoutContainer(Layout_Horizontal)
 
   self.changeDirectoryButton = newButton("Change save directory")
 
   self.saveButton = newButton("Save settings")
 
-  self.mainWindow.add(self.mainUI)
-  self.mainUI.add(self.pathBox)
-  self.mainUI.add(self.downUI)
-  self.downUI.add(self.changeDirectoryButton)
-  self.downUI.add(self.saveButton)
+  self.changeLangUi = newLayoutContainer(Layout_Vertical)
+  self.changeLangUi.widthMode = WidthMode_Expand
+  self.changelangUi.frame = newFrame("fugafuga")
+
+  self.comboBox = newComboBox(LANGNAME)
+
+  self.changeLangButton = newButton("Change language")
+
+  self.window.add(self.mainUi)
+  self.mainUi.add(self.changePathUi)
+  self.changePathUi.add(self.pathBox)
+  self.changePathUi.add(self.buttonUi)
+  self.buttonUi.add(self.changeDirectoryButton)
+  self.buttonUi.add(self.saveButton)
+  self.mainui.add(self.changeLangUi)
+  self.changeLangUi.add(self.comboBox)
+  self.changeLangUi.add(self.changeLangButton)
 
 
-method addControls(self:var MainUI): void =
-  self.mainUI = newLayoutContainer(Layout_Horizontal)
+method setControls(self:var MainWindow): void =
+  self.mainUi = newLayoutContainer(Layout_Horizontal)
 
-  self.leftUI = newLayoutContainer(Layout_Vertical)
-  self.leftUI.heightMode = HeightMode_Expand # 縦方向に長さ最大
-  self.leftUI.width = 150
-  self.leftUI.xAlign = XAlign_Center # X軸で真ん中にコントロールを整列させる
-  self.leftUI.frame = newFrame("-Menu-")
+  const leftUiButtonHeight: int = 40
 
-  let leftUIButtonHeight: int = 40
+  self.leftUi = newLayoutContainer(Layout_Vertical)
+  self.leftUi.heightMode = HeightMode_Expand # 縦方向に長さ最大
+  self.leftUi.width = 150
+  self.leftUi.xAlign = XAlign_Center # X軸で真ん中にコントロールを整列させる
+  self.leftUi.frame = newFrame("-Menu-")
 
   self.beatmapMoveButton = newButton("Move beatmaps")
-  self.beatmapMoveButton.height = leftUIButtonHeight
+  self.beatmapMoveButton.height = leftUiButtonHeight
   self.beatmapMoveButton.widthMode = WidthMode_Expand
 
   self.settingButton = newButton("Settings")
-  self.settingButton.height = leftUIButtonHeight
+  self.settingButton.height = leftUiButtonHeight
   self.settingButton.widthMode = WidthMode_Expand
 
-  self.rightUI = newLayoutContainer(Layout_Vertical)
+  self.rightUi = newLayoutContainer(Layout_Vertical)
 
   self.resultArea = newTextArea()
   self.resultArea.editable = false
 
   self.progressBar =newProgressBar()
 
-  self.mainWindow.add(self.mainUI)
-  self.mainUI.add(self.leftUI)
-  self.leftUI.add(self.beatmapMoveButton)
-  self.leftUI.add(self.settingButton)
-  self.mainUI.add(self.rightUI)
-  self.rightUI.add(self.resultArea)
-  self.rightUI.add(self.progressBar)
+  self.window.add(self.mainUi)
+  self.mainUi.add(self.leftUI)
+  self.leftUi.add(self.beatmapMoveButton)
+  self.leftUi.add(self.settingButton)
+  self.mainUi.add(self.rightUI)
+  self.rightUi.add(self.resultArea)
+  self.rightUi.add(self.progressBar)
 
 
-proc setButtonEvent(self: SettingUI, ui: MainUI): void =
+proc setButtonEvent(self: SettingWindow, ui: MainWindow): void =
+  # パスを入力するテキストボックスの内容が変更されたときの処理
+  self.pathBox.onTextChange = proc(event: TextChangeEvent) =
+    self.saveButton.enabled = true
+
+  # フォルダ選択のボタンが押されたときの処理
   self.changeDirectoryButton.onClick = proc(event: ClickEvent) =
     var dialog = SelectDirectoryDialog()
     dialog.title = "Select Osu!/Songs directory"
@@ -130,21 +156,36 @@ proc setButtonEvent(self: SettingUI, ui: MainUI): void =
     if dialog.selectedDirectory == "":
       return
     self.pathBox.text = dialog.selectedDirectory
+    self.saveButton.enabled = true
 
+  # 入力されたパスを保存するときの処理
   self.saveButton.onClick = proc(event: ClickEvent) =
     let path: string = self.pathBox.text
     if path == "":
       return
-    let msg: string = updateConfigFile(configFilePath, path)
-    self.mainWindow.msgBox(msg, "Success")
+    let msg: string = updatePath(path)
+    self.window.msgBox(msg, "Success")
     ui.resultArea.addLine(msg)
+    self.saveButton.enabled = false
 
-  self.mainWindow.onCloseClick = proc(event: CloseClickEvent) =
-    self.mainWindow.visible = false
+  # コンボボックスが変更されたときの処理
+  self.comboBox.onChange = proc(event: ComboBoxChangeEvent) =
+    self.changeLangButton.enabled = true
+
+  # 言語変更のボタンが押されたときの処理
+  self.changeLangButton.onClick = proc(event: ClickEvent) =
+    updateLangMode(self.comboBox.index)
+    self.window.alert("Language is changed. Please restart.", "Info")
+    ui.resultArea.addLine(fmt"[Info]: Change language to '{self.comboBox.value}'. Please restart.")
+    self.changeLangButton.enabled = false
+
+  # ウィンドウを閉じるボタンが押されたときの処理
+  self.window.onCloseClick = proc(event: CloseClickEvent) =
+    self.window.visible = false
 
 
-proc setButtonEvent(self: MainUI): void =
-  # 譜面移動ボタン
+proc setButtonEvent(self: MainWindow): void =
+  # 譜面移動ボタンが押されたときの処理
   self.beatmapMoveButton.onClick = proc(event: ClickEvent) =
     let result: ReturnPath = returnPath()
     if result.isError == 0: # Success
@@ -152,31 +193,33 @@ proc setButtonEvent(self: MainUI): void =
       if not obj.isError:
         self.resultArea.addLine(obj.msg)
         return
-      self.mainWindow.alert(obj.msg, "Error")
+      self.window.alert(obj.msg, "Error")
       self.resultArea.addLine(obj.msg)
 
     elif result.isError == 1:
       let errorText: string = fmt"[Error]: '{configFilePath}' file does not exist."
-      self.mainWindow.alert(errorText, "Error")
+      self.window.alert(errorText, "Error")
       self.resultArea.addLine(errorText)
 
     elif result.isError == 2:
       let errorText: string = fmt"[Error]: Keyword 'path' does not exist in '{configFilePath}'."
-      self.mainWindow.alert(errorText, "Error")
+      self.window.alert(errorText, "Error")
       self.resultArea.addLine(errorText)
 
-  # 設定ボタン
+  # 設定ボタンが押されたときの処理
   self.settingButton.onClick = proc(event: ClickEvent) =
+    self.setting.pathBox.text = ""
     let result: ReturnPath = returnPath()
     if result.isError == 0:
-      self.settingUI.pathBox.text = result.path
-    self.settingUI.mainWindow.visible = true
-    self.settingUI.pathBox.focus()
-    echo self.settingUI.mainWindow.disposed
+      self.setting.pathBox.text = result.path
+    self.setting.window.visible = true
+    self.setting.changeLangButton.enabled = false
+    self.setting.saveButton.enabled = false
+    self.setting.pathBox.focus()
 
-  # メイン画面を閉じる処理
-  self.mainWindow.onCloseClick = proc(event: CloseClickEvent) =
-    case self.mainWindow.msgBox("Do you want to quit?", "", "Quit", "Cancel")
+  # メイン画面を閉じるときの処理
+  self.window.onCloseClick = proc(event: CloseClickEvent) =
+    case self.window.msgBox("Do you want to quit?", "", "Quit", "Cancel")
     of 1: app.quit()
     else: discard
 
