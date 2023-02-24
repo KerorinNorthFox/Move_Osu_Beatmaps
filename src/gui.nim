@@ -2,6 +2,8 @@ import
   nigui,
   nigui/msgbox,
   std/strformat,
+  std/sugar,
+  std/os,
   ./utils,
   ./lang
 
@@ -85,17 +87,19 @@ method setControls(self:var SettingWindow): void =
 
   self.buttonUi = newLayoutContainer(Layout_Horizontal)
 
-  self.changeDirectoryButton = newButton("Change save directory")
+  self.changeDirectoryButton = newButton(LANG[LANGMODE].sChangeDirButtonText)
 
-  self.saveButton = newButton("Save settings")
+  self.saveButton = newButton(LANG[LANGMODE].sSaveButton)
 
   self.changeLangUi = newLayoutContainer(Layout_Vertical)
   self.changeLangUi.widthMode = WidthMode_Expand
-  self.changelangUi.frame = newFrame("fugafuga")
+  self.changeLangUi.frame = newFrame(LANG[LANGMODE].sChangeLangUiFrameText)
 
-  self.comboBox = newComboBox(LANGNAME)
+  let langSeq = collect(newSeq):
+    for lang in LANG: lang.language
+  self.comboBox = newComboBox(langSeq)
 
-  self.changeLangButton = newButton("Change language")
+  self.changeLangButton = newButton(LANG[LANGMODE].sChangeLangButton)
 
   self.window.add(self.mainUi)
   self.mainUi.add(self.changePathUi)
@@ -117,13 +121,13 @@ method setControls(self:var MainWindow): void =
   self.leftUi.heightMode = HeightMode_Expand # 縦方向に長さ最大
   self.leftUi.width = 150
   self.leftUi.xAlign = XAlign_Center # X軸で真ん中にコントロールを整列させる
-  self.leftUi.frame = newFrame("-Menu-")
+  self.leftUi.frame = newFrame(LANG[LANGMODE].mLeftUiFrameText)
 
-  self.beatmapMoveButton = newButton("Move beatmaps")
+  self.beatmapMoveButton = newButton(LANG[LANGMODE].mBeatmapMoveButton)
   self.beatmapMoveButton.height = leftUiButtonHeight
   self.beatmapMoveButton.widthMode = WidthMode_Expand
 
-  self.settingButton = newButton("Settings")
+  self.settingButton = newButton(LANG[LANGMODE].mSettingButton)
   self.settingButton.height = leftUiButtonHeight
   self.settingButton.widthMode = WidthMode_Expand
 
@@ -151,7 +155,7 @@ proc setButtonEvent(self: SettingWindow, ui: MainWindow): void =
   # フォルダ選択のボタンが押されたときの処理
   self.changeDirectoryButton.onClick = proc(event: ClickEvent) =
     var dialog = SelectDirectoryDialog()
-    dialog.title = "Select Osu!/Songs directory"
+    dialog.title = LANG[LANGMODE].changeOsuSongsDirDialogTitle
     dialog.run()
     if dialog.selectedDirectory == "":
       return
@@ -176,7 +180,7 @@ proc setButtonEvent(self: SettingWindow, ui: MainWindow): void =
   self.changeLangButton.onClick = proc(event: ClickEvent) =
     updateLangMode(self.comboBox.index)
     self.window.alert("Language is changed. Please restart.", "Info")
-    ui.resultArea.addLine(fmt"[Info]: Change language to '{self.comboBox.value}'. Please restart.")
+    ui.resultArea.addLine(LANG[LANGMODE].changeLangTextAreaFront & self.comboBox.value & LANG[LANGMODE].changeLangTextAreaBack)
     self.changeLangButton.enabled = false
 
   # ウィンドウを閉じるボタンが押されたときの処理
@@ -197,12 +201,12 @@ proc setButtonEvent(self: MainWindow): void =
       self.resultArea.addLine(obj.msg)
 
     elif result.isError == 1:
-      let errorText: string = fmt"[Error]: '{configFilePath}' file does not exist."
+      let errorText: string = fmt"[Error]: '{configFilePath}'" & LANG[LANGMODE].fileDoesNotExistErrorText
       self.window.alert(errorText, "Error")
       self.resultArea.addLine(errorText)
 
     elif result.isError == 2:
-      let errorText: string = fmt"[Error]: Keyword 'path' does not exist in '{configFilePath}'."
+      let errorText: string = LANG[LANGMODE].keywordDoesNotExistErrorTextFront & configFilePath & LANG[LANGMODE].keywordDoesNotExistErrorTextBack
       self.window.alert(errorText, "Error")
       self.resultArea.addLine(errorText)
 
@@ -219,7 +223,7 @@ proc setButtonEvent(self: MainWindow): void =
 
   # メイン画面を閉じるときの処理
   self.window.onCloseClick = proc(event: CloseClickEvent) =
-    case self.window.msgBox("Do you want to quit?", "", "Quit", "Cancel")
+    case self.window.msgBox(LANG[LANGMODE].endProgram, LANG[LANGMODE].endProgramTitle, LANG[LANGMODE].endProgramButton, LANG[LANGMODE].cancel)
     of 1: app.quit()
     else: discard
 

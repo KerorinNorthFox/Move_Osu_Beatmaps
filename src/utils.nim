@@ -46,7 +46,7 @@ proc isError*(self:MoveMapFiles): bool =
   self.isError
 
 
-proc makeConfigFile(): void
+proc makeConfigFile*(): void
 proc updatepath*(path:string): string
 proc updateLangMode*(mode:int): void
 proc loadPath(): string
@@ -57,14 +57,13 @@ proc moveMapFiles*(toPath:string): MoveMapFiles
 
 const configFilePath*: string = "config.ini"
 const downloadPath*: string = joinPath(getEnv("USERPROFILE"), "Downloads")
-let LANGMODE*: int = loadLangMode()
-
 if not configFilePath.fileExists:
-  makeConfigFile()
+    makeConfigFile()
+let LANGMODE*: int = loadLangMode()
 
 
 # configを作成する
-proc makeConfigFile(): void =
+proc makeConfigFile*(): void =
   var dict: Config = newConfig()
   dict.setSectionKey("PATH", "path", "")
   dict.setSectionKey("LANGUAGE", "mode", "1")
@@ -76,7 +75,7 @@ proc updatePath*(path:string): string =
   var dict: Config = loadConfig(configFilePath)
   dict.setSectionKey("PATH", "path", path)
   dict.writeConfig(configFilePath)
-  return "[Success]: Updated new config file."
+  return LANG[LANGMODE].updatePathReturnText
 
 
 # configのlanguage編集
@@ -107,7 +106,7 @@ proc returnPath*(): ReturnPath =
     return ReturnPath(path:"", text:text, isError:1)
   try:
     let path: string = loadPath()
-    let text = fmt"[Success]: Get path '{path}' from '{configFilePath}'."
+    let text = LANG[LANGMODE].getPathReturnTextFront & path & LANG[LANGMODE].getPathReturnTextCenter & configFilePath & LANG[LANGMODE].getPathReturnTextBack
     return ReturnPath(path:path, text:text, isError:0)
   except KeyError:
     let text: string = fmt"""[Error]: Keyword 'path' does not exist in '{configFilePath}'. Try the command '--path "DirectoryPath"' to set path."""
@@ -115,12 +114,12 @@ proc returnPath*(): ReturnPath =
 
 
 # ファイル移動
-proc moveMapFiles*(toPath:string): MoveMapFiles = # TODO: 第二引数にseqで除外する譜面のパスを取る
+proc moveMapFiles*(toPath:string): MoveMapFiles =
   if not toPath.contains("osu!") and not toPath.contains("Songs"): # パスが"/osu!/Songs"なのか
-    let msg: string = fmt"[Error]: Path '{toPath}' is not Osu!'s Songs directory."
+    let msg: string = fmt"[Error]: '{toPath}' " & LANG[LANGMODE].pathIsNotSongsDir
     return MoveMapFiles(msg:msg, isError:true)
   if not toPath.dirExists:
-    let msg: string = fmt"[Error]: Path '{toPath}' does not exist."
+    let msg: string = fmt"[Error]: '{toPath}' " & LANG[LANGMODE].pathDoesNotExist
     return MoveMapFiles(msg:msg, isError:true)
 
   var osuFiles: seq[string]
@@ -128,14 +127,14 @@ proc moveMapFiles*(toPath:string): MoveMapFiles = # TODO: 第二引数にseqで�
     osuFiles.add(f)
 
   if osuFiles.len == 0:
-    let msg: string = "[Info]: There is no beatmaps."
+    let msg: string = LANG[LANGMODE].noBeatmaps
     return MoveMapFiles(msg:msg, isError:false)
 
-  for osuFile in osuFiles: # TODO: 除外する譜面を除外する処理
+  for osuFile in osuFiles:
     try:
       execShellCmd(&"move \"{osuFile}\" \"{toPath}\"")
     except:
-      return MoveMapFiles(msg:"[Error]: Process failed.", isError:true)
+      return MoveMapFiles(msg:LANG[LANGMODE].processFailed, isError:true)
 
-  let msg: string = &"[Success]: Move {osuFiles.len} beatmaps."
+  let msg: string = LANG[LANGMODE].moveBeatmapsFront & $osuFiles.len & LANG[LANGMODE].moveBeatmapsBack
   return MoveMapFiles(msg:msg, isError:false)
