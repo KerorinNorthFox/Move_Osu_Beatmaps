@@ -10,3 +10,10 @@ MoveBeatmaps is a tool that moves all beatmaps from the Download folder to the o
 
 ## Usage
 使い方は同梱のreadme_(lang).txtに書いてあります。
+
+## TODO
+- [x] Move beatmaps.
+- [x] Japanese/English mode.
+- [] Get notified of updates when app starts.
+- [] Unpack skins.
+- [] Move selected beatmaps.
