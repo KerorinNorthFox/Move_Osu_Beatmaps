@@ -14,6 +14,6 @@ MoveBeatmaps is a tool that moves all beatmaps from the Download folder to the o
 ## TODO
 - [x] Move beatmaps.
 - [x] Japanese/English mode.
-- [] Get notified of updates when app starts.
-- [] Unpack skins.
-- [] Move selected beatmaps.
+- [ ] Get notified of updates when app starts.
+- [ ] Unpack skins.
+- [ ] Move selected beatmaps.
