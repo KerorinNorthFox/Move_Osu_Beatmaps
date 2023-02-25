@@ -46,7 +46,7 @@ proc isError*(self:MoveMapFiles): bool =
   self.isError
 
 
-proc makeConfigFile*(): void
+proc makeConfigFile*(path:string=""): void
 proc updatepath*(path:string): string
 proc updateLangMode*(mode:int): void
 proc loadPath(): string
@@ -63,15 +63,17 @@ let LANGMODE*: int = loadLangMode()
 
 
 # configを作成する
-proc makeConfigFile*(): void =
+proc makeConfigFile*(path:string=""): void =
   var dict: Config = newConfig()
-  dict.setSectionKey("PATH", "path", "")
+  dict.setSectionKey("PATH", "path", path)
   dict.setSectionKey("LANGUAGE", "mode", "1")
   dict.writeConfig(configFilePath)
 
 
 # configのpath編集
 proc updatePath*(path:string): string =
+  if not configFilePath.fileExists:
+    makeConfigFile(path)
   var dict: Config = loadConfig(configFilePath)
   dict.setSectionKey("PATH", "path", path)
   dict.writeConfig(configFilePath)
