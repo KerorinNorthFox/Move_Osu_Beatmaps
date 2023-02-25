@@ -1,3 +1,10 @@
+import std/strformat
+
+
+const version: string = "v1.0.0"
+let mainWindowTitle: string = fmt"MoveBeatmaps[{version}]"
+
+
 type Language = object
   language*: string
   startProgram*: string
@@ -35,7 +42,7 @@ type Language = object
 let japanese: Language = Language(
   language:"日本語",
   startProgram:"[Info]: プログラムが開始されました。",
-  mainWindowTitle:"MoveBeatmaps",
+  mainWindowTitle:mainWindowTitle,
   settingWindowTitle:"設定",
   sChangePathUiFrameText:"譜面の移動先を設定",
   sChangeDirButtonText:"フォルダを選ぶ",
@@ -71,7 +78,7 @@ let japanese: Language = Language(
 let english: Language = Language(
   language:"English",
   startProgram:"[Info]: Start the program.",
-  mainWindowTitle:"MoveBeatmaps",
+  mainWindowTitle:mainWindowTitle,
   settingWindowTitle:"Settings",
   sChangePathUiFrameText:"Set up the destination of beatmaps",
   sChangeDirButtonText:"Select folder",
