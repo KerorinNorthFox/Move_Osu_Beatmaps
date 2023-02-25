@@ -50,7 +50,7 @@ proc makeConfigFile*(): void
 proc updatepath*(path:string): string
 proc updateLangMode*(mode:int): void
 proc loadPath(): string
-proc loadLangMode*(): int
+proc loadLangMode(): int
 proc returnPath*(): ReturnPath
 proc moveMapFiles*(toPath:string): MoveMapFiles
 
