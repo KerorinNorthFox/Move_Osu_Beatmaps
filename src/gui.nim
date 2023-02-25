@@ -3,7 +3,6 @@ import
   nigui/msgbox,
   std/strformat,
   std/sugar,
-  std/os,
   ./utils,
   ./lang
 
@@ -30,9 +29,7 @@ type MainWindow = object of Application
   beatmapMoveButton: Button # 左UI->譜面移動ボタン
   settingButton: Button # 左UI->設定画面ボタン
 
-  rightUi: LayoutContainer # 右UI
   resultArea: TextArea # 右UI->結果表示エリア
-  progressBar: ProgressBar # 右UI->プログレスバー
 
   setting: SettingWindow # 設定ウィンドウ
 
@@ -131,20 +128,14 @@ method setControls(self:var MainWindow): void =
   self.settingButton.height = leftUiButtonHeight
   self.settingButton.widthMode = WidthMode_Expand
 
-  self.rightUi = newLayoutContainer(Layout_Vertical)
-
   self.resultArea = newTextArea()
   self.resultArea.editable = false
-
-  self.progressBar =newProgressBar()
 
   self.window.add(self.mainUi)
   self.mainUi.add(self.leftUI)
   self.leftUi.add(self.beatmapMoveButton)
   self.leftUi.add(self.settingButton)
-  self.mainUi.add(self.rightUI)
-  self.rightUi.add(self.resultArea)
-  self.rightUi.add(self.progressBar)
+  self.mainUi.add(self.resultArea)
 
 
 proc setButtonEvent(self: SettingWindow, ui: MainWindow): void =
