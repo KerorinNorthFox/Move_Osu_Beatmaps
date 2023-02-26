@@ -8,5 +8,5 @@
 1. Do not modify the contents of config.ini. It may stop working.
 
 # About update
-Since this application does not yet have an update detection feature, update information will be announced via Twitter and Github.
-We plan to implement the update detection function in the future.
+When the latest version is released, an update notification window will appear when the application is launched.
+Follow the same procedure as for downloading to download the latest version and replace it with the current version.
