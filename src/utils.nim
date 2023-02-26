@@ -82,7 +82,7 @@ proc getLatestVersion*(url:string): string =
 proc makeConfigFile*(path:string=""): void =
   var dict: Config = newConfig()
   dict.setSectionKey("PATH", "path", path)
-  dict.setSectionKey("LANGUAGE", "mode", "1")
+  dict.setSectionKey("LANGUAGE", "mode", "0")
   dict.writeConfig(configFilePath)
 
 

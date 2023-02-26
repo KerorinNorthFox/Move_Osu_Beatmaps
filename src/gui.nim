@@ -58,8 +58,10 @@ proc main(): void =
   let releasedVersion: string = getLatestVersion(URL_API)
   if releasedVersion == "": # 取得できなかった
     application.window.msgBox(LANG[LANGMODE].doNotGetVer, LANG[LANGMODE].updateDetected)
+    application.resultArea.addLine("[Info]: " & LANG[LANGMODE].doNotGetVer)
   elif releasedVersion != VERSION: # バージョンが違う
     application.window.msgBox(LANG[LANGMODE].diffVerFront & releasedVersion & LANG[LANGMODE].diffVerBack & URL, LANG[LANGMODE].updateDetected)
+    application.resultArea.addLine("[Info]: " & LANG[LANGMODE].diffVerFront & releasedVersion & LANG[LANGMODE].diffVerBack & URL)
 
   application.resultArea.addLine(LANG[LANGMODE].startProgram)
   app.run()
