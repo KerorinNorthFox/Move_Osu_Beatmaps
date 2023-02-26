@@ -6,10 +6,13 @@ MoveBeatmaps is a tool that moves all beatmaps from the Download folder to the o
 ![](img/main_window.jpg)
 
 ## Download
-ダウンロードは[こちら](https://github.com/KerorinNorthFox/Move_Osu_Beatmaps/releases/latest/download/MoveBeatmaps-v1.0.0-release.zip)を押すとダウンロードが開始されます。
+ダウンロードは[こちら](https://github.com/KerorinNorthFox/Move_Osu_Beatmaps/releases/latest/download/MoveBeatmaps-v1.0.1-release.zip)を押すとダウンロードが開始されます。
 
 ## Usage
 使い方は同梱のreadme_(lang).txtに書いてあります。
+
+## Required
+OS: Windows only
 
 ## TODO
 - [x] Move beatmaps.
@@ -17,3 +20,11 @@ MoveBeatmaps is a tool that moves all beatmaps from the Download folder to the o
 - [ ] Get notified of updates when app starts.
 - [ ] Unpack skins.
 - [ ] Move selected beatmaps.
+
+## History
+### 22/2/25: 
+リリース
+
+### 22/2/26:
+譜面ファイル移動時にプロンプトが点滅するバグを修正
+
