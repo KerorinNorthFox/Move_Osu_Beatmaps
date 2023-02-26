@@ -1,12 +1,15 @@
 import std/strformat
 
 
-const version: string = "v1.0.1"
-let mainWindowTitle: string = fmt"MoveBeatmaps[{version}]"
+const VERSION*: string = "v1.0.1"
+let mainWindowTitle: string = fmt"MoveBeatmaps[{VERSION}]"
 
 
 type Language = object
   language*: string
+  doNotGetVer*: string
+  diffVerFront*: string
+  diffVerBack*: string
   startProgram*: string
   mainWindowTitle*: string
   settingWindowTitle*: string
@@ -41,6 +44,9 @@ type Language = object
 
 let japanese: Language = Language(
   language:"日本語",
+  doNotGetVer:"バージョン情報が取得できませんでした。",
+  diffVerFront:"最新バージョン '",
+  diffVerBack:"' がリリースされています。Githubのサイトから最新バージョンをダウンロードして更新してください。",
   startProgram:"[Info]: プログラムが開始されました。",
   mainWindowTitle:mainWindowTitle,
   settingWindowTitle:"設定",
@@ -77,6 +83,9 @@ let japanese: Language = Language(
 
 let english: Language = Language(
   language:"English",
+  doNotGetVer:"",
+  diffVerFront:"Latest version '",
+  diffVerBack:"' is released. Please download the updated version on Github.",
   startProgram:"[Info]: Start the program.",
   mainWindowTitle:mainWindowTitle,
   settingWindowTitle:"Settings",
@@ -111,4 +120,4 @@ let english: Language = Language(
   moveBeatmapsBack:" beatmaps."
 )
 
-let LANG*: array[2, Language] = [japanese, english]
+let LANG*: array[2, Language] = [english, japanese]
