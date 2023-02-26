@@ -1,7 +1,8 @@
-import std/strformat
+import
+  std/strformat,
+  ./info
 
 
-const VERSION*: string = "v1.1.0"
 let mainWindowTitle: string = fmt"MoveBeatmaps[{VERSION}]"
 
 
