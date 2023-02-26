@@ -17,7 +17,7 @@ OS: Windows only
 ## TODO
 - [x] Move beatmaps.
 - [x] Japanese/English mode.
-- [ ] Get notified of updates when app starts.
+- [x] Get notified of updates when app is launched.
 - [ ] Unpack skins.
 - [ ] Move selected beatmaps.
 
