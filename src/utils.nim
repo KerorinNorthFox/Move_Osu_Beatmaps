@@ -3,6 +3,8 @@ import
   std/parsecfg,
   std/strformat,
   std/strutils,
+  std/httpclient,
+  std/json,
   ./lang
 
 
@@ -46,6 +48,7 @@ proc isError*(self:MoveMapFiles): bool =
   self.isError
 
 
+proc getLatestVersion*(url:string): string
 proc makeConfigFile*(path:string=""): void
 proc updatepath*(path:string): string
 proc updateLangMode*(mode:int): void
@@ -62,11 +65,24 @@ if not configFilePath.fileExists:
 let LANGMODE*: int = loadLangMode()
 
 
+# githubからlatest releaseのタグを取得する
+proc getLatestVersion*(url:string): string =
+  var clt = newHttpClient()
+  var res: string
+  try:
+    res = clt.getContent(url)
+  except OSError:
+    return ""
+
+  let j = res.parseJson()
+  return j["name"].getStr()
+
+
 # configを作成する
 proc makeConfigFile*(path:string=""): void =
   var dict: Config = newConfig()
   dict.setSectionKey("PATH", "path", path)
-  dict.setSectionKey("LANGUAGE", "mode", "1")
+  dict.setSectionKey("LANGUAGE", "mode", "0")
   dict.writeConfig(configFilePath)
 
 

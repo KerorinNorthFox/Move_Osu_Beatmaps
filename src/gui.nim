@@ -7,6 +7,10 @@ import
   ./lang
 
 
+const URL_API: string = "https://api.github.com/repos/KerorinNorthFox/Move_Osu_Beatmaps/releases/latest"
+const URL: string = "https://github.com/KerorinNorthFox/Move_Osu_Beatmaps"
+
+
 type Application = object of RootObj
   window: Window # メイン画面
   mainUi: LayoutContainer # 画面最上位コンテナ
@@ -50,6 +54,14 @@ proc main(): void =
   application.window.show()
   application.setting.window.show()
   application.setting.window.visible = false
+
+  let releasedVersion: string = getLatestVersion(URL_API)
+  if releasedVersion == "": # 取得できなかった
+    application.window.msgBox(LANG[LANGMODE].doNotGetVer, LANG[LANGMODE].updateDetected)
+    application.resultArea.addLine("[Info]: " & LANG[LANGMODE].doNotGetVer)
+  elif releasedVersion != VERSION: # バージョンが違う
+    application.window.msgBox(LANG[LANGMODE].diffVerFront & releasedVersion & LANG[LANGMODE].diffVerBack & URL, LANG[LANGMODE].updateDetected)
+    application.resultArea.addLine("[Info]: " & LANG[LANGMODE].diffVerFront & releasedVersion & LANG[LANGMODE].diffVerBack & URL)
 
   application.resultArea.addLine(LANG[LANGMODE].startProgram)
   app.run()
