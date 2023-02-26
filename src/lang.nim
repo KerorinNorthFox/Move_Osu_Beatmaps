@@ -10,6 +10,7 @@ type Language = object
   doNotGetVer*: string
   diffVerFront*: string
   diffVerBack*: string
+  updateDetected*: string
   startProgram*: string
   mainWindowTitle*: string
   settingWindowTitle*: string
@@ -47,6 +48,7 @@ let japanese: Language = Language(
   doNotGetVer:"バージョン情報が取得できませんでした。",
   diffVerFront:"最新バージョン '",
   diffVerBack:"' がリリースされています。Githubのサイトから最新バージョンをダウンロードして更新してください。",
+  updateDetected:"アップデート通知",
   startProgram:"[Info]: プログラムが開始されました。",
   mainWindowTitle:mainWindowTitle,
   settingWindowTitle:"設定",
@@ -83,9 +85,10 @@ let japanese: Language = Language(
 
 let english: Language = Language(
   language:"English",
-  doNotGetVer:"",
+  doNotGetVer:"Can not get the update info.",
   diffVerFront:"Latest version '",
   diffVerBack:"' is released. Please download the updated version on Github.",
+  updateDetected:"Update detected",
   startProgram:"[Info]: Start the program.",
   mainWindowTitle:mainWindowTitle,
   settingWindowTitle:"Settings",
