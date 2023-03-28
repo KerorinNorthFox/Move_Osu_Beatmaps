@@ -1,12 +1,12 @@
 〇MoveBeatmapsの使い方
-1.main.exeを実行します
+1.bin/MoveBeatmaps.exeを実行します
 2.Settingsボタンから設定を開き、Select folderからosuのSongsフォルダを選択します。
 3.Select folderボタンの横にあるSaveボタンを押してパスの設定を保存します。
 4.Move beatmapsボタンを押すと、Downloadフォルダにある譜面がSongsフォルダに一括移動します。
 5.閉じる際は右上の×ボタンを押してQuitしてください。
 
 〇言語変更
-1.main.exeを実行します。
+1.bin/MoveBeatmaps.exeを実行します。
 2.Settingsボタンから設定を開き、Change languageのコンボボックスで日本語を選択します。
 3.Saveボタンが押せるようになるため、押して設定を保存します。
 4.一度アプリを閉じると、次回から日本語で起動します。
