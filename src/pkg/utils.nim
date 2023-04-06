@@ -7,63 +7,35 @@ import
   std/json,
   ./lang
 
-
-type ReturnPath* = ref object
-  path: string
-  isError: int
-  text: string
-
-type MoveMapFiles* = ref object
-  msg: string
-  isError: bool
-
-proc `path=`*(self:ReturnPath, path:string): void =
-  self.path = path
-
-proc path*(self:ReturnPath): string =
-  self.path
-
-proc `isError=`*(self:ReturnPath, isError:int): void =
-  self.isError = isError
-
-proc isError*(self:ReturnPath): int =
-  self.isError
-
-proc `text=`*(self:ReturnPath, text:string): void =
-  self.text = text
-
-proc text*(self:ReturnPath): string =
-  self.text
-
-proc `msg=`*(self:MoveMapFiles, msg:string): void =
-  self.msg = msg
-
-proc msg*(self:MoveMapFiles): string =
-  self.msg
-  
-proc `isError=`*(self:MoveMapFiles, isError:bool): void =
-  self.isError = isError
-
-proc isError*(self:MoveMapFiles): bool =
-  self.isError
-
-
-proc getLatestVersion*(url:string): string
-proc makeConfigFile*(path:string=""): void
-proc updatepath*(path:string): string
-proc updateLangMode*(mode:int): void
-proc loadPath(): string
-proc loadLangMode(): int
-proc returnPath*(): ReturnPath
-proc moveMapFiles*(toPath:string): MoveMapFiles
-
-
 const configFilePath*: string = "config.ini"
 const downloadPath*: string = joinPath(getEnv("USERPROFILE"), "Downloads")
-if not configFilePath.fileExists:
-    makeConfigFile()
-let LANGMODE*: int = loadLangMode()
 
+type ReturnPath* = ref object
+  path*: string
+  isError*: int
+  text*: string
+
+type MoveMapFiles* = ref object
+  msg*: string
+  isError*: bool
+
+# configを作成する
+proc makeConfigFile*(path:string=""): void =
+  var dict: Config = newConfig()
+  dict.setSectionKey("PATH", "path", path)
+  dict.setSectionKey("LANGUAGE", "mode", "0")
+  dict.writeConfig(configFilePath)
+
+if not configFilePath.fileExists:
+  makeConfigFile()
+
+# configから言語のmodeを読み込む
+proc loadLangMode(): int =
+  var dict: Config = loadConfig(configFilePath)
+  let mode = dict.getSectionValue("LANGUAGE", "mode")
+  return mode.parseInt
+
+let LANGMODE*: int = loadLangMode()
 
 # githubからlatest releaseのタグを取得する
 proc getLatestVersion*(url:string): string =
@@ -77,14 +49,11 @@ proc getLatestVersion*(url:string): string =
   let j = res.parseJson()
   return j["name"].getStr()
 
-
-# configを作成する
-proc makeConfigFile*(path:string=""): void =
-  var dict: Config = newConfig()
-  dict.setSectionKey("PATH", "path", path)
-  dict.setSectionKey("LANGUAGE", "mode", "0")
-  dict.writeConfig(configFilePath)
-
+# configからpathを読み込む
+proc loadPath(): string =
+  var dict: Config = loadConfig(configFilePath)
+  let path = dict.getSectionValue("PATH", "path")
+  return path
 
 # configのpath編集
 proc updatePath*(path:string): string =
@@ -95,27 +64,11 @@ proc updatePath*(path:string): string =
   dict.writeConfig(configFilePath)
   return LANG[LANGMODE].updatePathReturnText
 
-
 # configのlanguage編集
 proc updateLangMode*(mode:int): void =
   var dict: Config = loadConfig(configFilePath)
   dict.setSectionKey("LANGUAGE", "mode", $mode)
   dict.writeConfig(configFilePath)
-
-
-# configからpathを読み込む
-proc loadPath(): string =
-  var dict: Config = loadConfig(configFilePath)
-  let path = dict.getSectionValue("PATH", "path")
-  return path
-
-
-# configから言語のmodeを読み込む
-proc loadLangMode(): int =
-  var dict: Config = loadConfig(configFilePath)
-  let mode = dict.getSectionValue("LANGUAGE", "mode")
-  return mode.parseInt
-
 
 # 読み込んだpathを返す
 proc returnPath*(): ReturnPath =
@@ -129,7 +82,6 @@ proc returnPath*(): ReturnPath =
   except KeyError:
     let text: string = fmt"""[Error]: Keyword 'path' does not exist in '{configFilePath}'. Try the command '--path "DirectoryPath"' to set path."""
     return ReturnPath(path:"", text:text, isError:2)
-
 
 # ファイル移動
 proc moveMapFiles*(toPath:string): MoveMapFiles =

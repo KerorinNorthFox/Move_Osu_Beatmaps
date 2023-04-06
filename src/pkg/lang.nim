@@ -2,9 +2,7 @@ import
   std/strformat,
   ./info
 
-
 let mainWindowTitle: string = fmt"MoveBeatmaps[{VERSION}]"
-
 
 type Language = object
   language*: string
