@@ -6,7 +6,7 @@ MoveBeatmaps is a tool that moves all beatmaps from the Download folder to the o
 ![](img/main_window.jpg)
 
 ## Download
-ダウンロードは[こちら](https://github.com/KerorinNorthFox/Move_Osu_Beatmaps/releases/latest/download/MoveBeatmaps-v1.1.0-release.zip)を押すとダウンロードが開始されます。
+ダウンロードは[こちら](https://github.com/KerorinNorthFox/Move_Osu_Beatmaps/releases/latest/download/MoveBeatmaps-v1.1.1.zip)を押すとダウンロードが開始されます。
 
 ## Usage
 使い方は同梱のreadme_(lang).txtに書いてあります。
