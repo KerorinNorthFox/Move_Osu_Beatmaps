@@ -7,17 +7,19 @@ import
   std/json,
   ./lang
 
-const configFilePath*: string = "config.ini"
-const downloadPath*: string = joinPath(getEnv("USERPROFILE"), "Downloads")
+const
+  configFilePath*: string = "config.ini"
+  downloadPath*: string = joinPath(getEnv("USERPROFILE"), "Downloads")
 
-type ReturnPath* = ref object
-  path*: string
-  isError*: int
-  text*: string
+type
+  ReturnPath* = ref object
+    path*: string
+    isError*: int
+    text*: string
 
-type MoveMapFiles* = ref object
-  msg*: string
-  isError*: bool
+  MoveMapFiles* = ref object
+    msg*: string
+    isError*: bool
 
 # configを作成する
 proc makeConfigFile*(path:string=""): void =
