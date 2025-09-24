@@ -104,7 +104,7 @@ proc moveMapFiles*(toPath:string): MoveMapFiles =
 
   for osuFile in osuFiles:
     try:
-      execShellCmd(&"move \"{osuFile}\" \"{toPath}\"")
+      discard execShellCmd(&"move \"{osuFile}\" \"{toPath}\"")
     except:
       return MoveMapFiles(msg:LANG[LANGMODE].processFailed, isError:true)
 
