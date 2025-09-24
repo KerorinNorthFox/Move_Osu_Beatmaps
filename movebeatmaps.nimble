@@ -1,11 +1,11 @@
-version       = "1.1.2"
+version       = "1.2.0"
 author        = "KerorinNF"
 description   = "A tool for not osu! supporter player that moves beatmaps all at once."
 license       = "MIT"
 srcDir        = "src"
 bin           = @["MoveBeatmaps"]
 
-requires "nim >= 1.6.8"
+requires "nim >= 2.2.4"
 
 import os, strformat
 
